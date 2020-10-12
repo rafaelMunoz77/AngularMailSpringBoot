@@ -18,7 +18,7 @@ public class MensajeController {
 	
 	@GetMapping("/mensajes/recibidos")
 	public List<Mensaje> mensajesRecibidosParaUsuarioAutenticado (int pagina, int mensajesPorPagina, HttpServletRequest request) {
-//		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
-		return this.mensajeRepo.getMensajesRecibidosDeUsuarioDesdeCRUDRepository(1, pagina, mensajesPorPagina);
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
+		return this.mensajeRepo.getMensajesRecibidosDeUsuarioDesdeCRUDRepository(idUsuAutenticado, pagina, mensajesPorPagina);
 	}
 }
