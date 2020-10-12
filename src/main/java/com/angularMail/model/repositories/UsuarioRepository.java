@@ -9,6 +9,6 @@ import com.angularMail.model.entities.Usuario;
 public interface UsuarioRepository extends CrudRepository<Usuario, Integer> {
 
 	public Usuario findByNombre(String nombre);
-    public Usuario findByUsuarioAndPassword(String name,String email);
+    public Usuario findByUsuarioAndPassword(String name,String password);
 
 }
