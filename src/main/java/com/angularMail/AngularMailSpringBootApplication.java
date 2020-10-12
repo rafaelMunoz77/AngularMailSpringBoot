@@ -8,6 +8,6 @@ public class AngularMailSpringBootApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AngularMailSpringBootApplication.class, args);
-	}
+	}  
 
 }
