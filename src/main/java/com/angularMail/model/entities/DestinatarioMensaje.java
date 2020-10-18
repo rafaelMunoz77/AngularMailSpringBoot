@@ -2,9 +2,6 @@ package com.angularMail.model.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Date;
 
 
@@ -13,33 +10,37 @@ import java.util.Date;
  * 
  */
 @Entity
+@Table(name = "destinatariomensaje")
 @NamedQuery(name="DestinatarioMensaje.findAll", query="SELECT d FROM DestinatarioMensaje d")
 public class DestinatarioMensaje implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@Column(name="id")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 
+	@Column(name="archivado")
 	private boolean archivado;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="fechaEliminacion")
 	private Date fechaEliminacion;
 
+	@Column(name="leido")
 	private boolean leido;
 
+	@Column(name="spam")
 	private boolean spam;
 
 	//bi-directional many-to-one association to Mensaje
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idMensaje")
-	@JsonIgnore	
 	private Mensaje mensaje;
 
 	//bi-directional many-to-one association to Usuario
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idDestinatario")
-	@JsonIgnore	
 	private Usuario usuario;
 
 	public DestinatarioMensaje() {
