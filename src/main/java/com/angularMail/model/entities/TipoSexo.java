@@ -2,9 +2,6 @@ package com.angularMail.model.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 
@@ -13,19 +10,21 @@ import java.util.List;
  * 
  */
 @Entity
+@Table(name = "tiposexo")
 @NamedQuery(name="TipoSexo.findAll", query="SELECT t FROM TipoSexo t")
 public class TipoSexo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@Column(name="id")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 
+	@Column(name="descripcion")
 	private String descripcion;
 
 	//bi-directional many-to-one association to Usuario
 	@OneToMany(mappedBy="tipoSexo")
-	@JsonIgnore	
 	private List<Usuario> usuarios;
 
 	public TipoSexo() {
