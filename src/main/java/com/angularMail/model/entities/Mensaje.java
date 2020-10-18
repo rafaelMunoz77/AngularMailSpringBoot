@@ -33,7 +33,7 @@ public class Mensaje implements Serializable {
 	//bi-directional many-to-one association to DestinatarioMensaje
 	@OneToMany(mappedBy="mensaje")
 	@JsonIgnore	
-	private List<DestinatarioMensaje> destinatarioMensajes;
+	private List<DestinatarioMensaje> destinatarioMensaje;
 
 	//bi-directional many-to-one association to Usuario
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -77,11 +77,11 @@ public class Mensaje implements Serializable {
 	}
 
 	public List<DestinatarioMensaje> getDestinatarioMensajes() {
-		return this.destinatarioMensajes;
+		return this.destinatarioMensaje;
 	}
 
 	public void setDestinatarioMensajes(List<DestinatarioMensaje> destinatarioMensajes) {
-		this.destinatarioMensajes = destinatarioMensajes;
+		this.destinatarioMensaje = destinatarioMensajes;
 	}
 
 	public DestinatarioMensaje addDestinatarioMensaje(DestinatarioMensaje destinatarioMensaje) {
