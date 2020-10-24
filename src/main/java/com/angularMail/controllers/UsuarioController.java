@@ -1,6 +1,7 @@
 package com.angularMail.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import com.angularMail.jwtSecurity.AutenticadorJWT;
 import com.angularMail.model.entities.Usuario;
 import com.angularMail.model.repositories.UsuarioRepository;
 
+@CrossOrigin
 @RestController
 public class UsuarioController {
 
