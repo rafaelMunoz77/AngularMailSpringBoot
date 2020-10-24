@@ -25,6 +25,7 @@ public class TipoSexo implements Serializable {
 
 	//bi-directional many-to-one association to Usuario
 	@OneToMany(mappedBy="tipoSexo")
+	@JsonIgnore
 	private List<Usuario> usuarios;
 
 	public TipoSexo() {

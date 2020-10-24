@@ -25,6 +25,7 @@ public class Nacionalidad implements Serializable {
 
 	//bi-directional many-to-one association to Usuario
 	@OneToMany(mappedBy="nacionalidad")
+	@JsonIgnore
 	private List<Usuario> usuarios;
 
 	public Nacionalidad() {

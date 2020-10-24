@@ -34,11 +34,13 @@ public class Mensaje implements Serializable {
 
 	//bi-directional many-to-one association to DestinatarioMensaje
 	@OneToMany(mappedBy="mensaje")
+	@JsonIgnore
 	private List<DestinatarioMensaje> destinatarioMensaje;
 
 	//bi-directional many-to-one association to Usuario
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idEmisor")
+	@JsonIgnore
 	private Usuario usuarioEmisor;
 
 	public Mensaje() {
@@ -76,23 +78,23 @@ public class Mensaje implements Serializable {
 		this.fecha = fecha;
 	}
 
-	public List<DestinatarioMensaje> getDestinatarioMensajes() {
+	public List<DestinatarioMensaje> getDestinatarioMensaje() {
 		return this.destinatarioMensaje;
 	}
 
-	public void setDestinatarioMensajes(List<DestinatarioMensaje> destinatarioMensajes) {
+	public void setDestinatarioMensaje(List<DestinatarioMensaje> destinatarioMensajes) {
 		this.destinatarioMensaje = destinatarioMensajes;
 	}
 
 	public DestinatarioMensaje addDestinatarioMensaje(DestinatarioMensaje destinatarioMensaje) {
-		getDestinatarioMensajes().add(destinatarioMensaje);
+		getDestinatarioMensaje().add(destinatarioMensaje);
 		destinatarioMensaje.setMensaje(this);
 
 		return destinatarioMensaje;
 	}
 
 	public DestinatarioMensaje removeDestinatarioMensaje(DestinatarioMensaje destinatarioMensaje) {
-		getDestinatarioMensajes().remove(destinatarioMensaje);
+		getDestinatarioMensaje().remove(destinatarioMensaje);
 		destinatarioMensaje.setMensaje(null);
 
 		return destinatarioMensaje;

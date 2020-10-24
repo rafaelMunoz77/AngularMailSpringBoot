@@ -36,11 +36,13 @@ public class DestinatarioMensaje implements Serializable {
 	//bi-directional many-to-one association to Mensaje
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idMensaje")
+	@JsonIgnore
 	private Mensaje mensaje;
 
 	//bi-directional many-to-one association to Usuario
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idDestinatario")
+	@JsonIgnore
 	private Usuario usuario;
 
 	public DestinatarioMensaje() {
