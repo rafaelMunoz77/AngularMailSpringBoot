@@ -1,7 +1,10 @@
 package com.angularMail.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +19,35 @@ public class UsuarioController {
 
 	@Autowired
 	UsuarioRepository usuRep;
+	
+	/**
+	 * 
+	 */
+	@GetMapping("/usuario/getAutenticado")
+	public DTO getUsuarioAutenticado (boolean imagen, HttpServletRequest request) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+
+		// Intento localizar un usuario a partir de su id
+		Usuario usuAutenticado = usuRep.findById(idUsuAutenticado).get();
+		if (usuAutenticado != null) {
+			dto.put("id", usuAutenticado.getId());
+			dto.put("nombre", usuAutenticado.getNombre());
+			dto.put("usuario", usuAutenticado.getUsuario());
+			dto.put("password", usuAutenticado.getPassword());
+			dto.put("email", usuAutenticado.getEmail());
+			dto.put("fechaNacimiento", usuAutenticado.getFechaNacimiento());
+			dto.put("fechaEliminacion", usuAutenticado.getFechaEliminacion());
+			dto.put("nacionalidad", usuAutenticado.getNacionalidad().getId());
+			dto.put("sexo", usuAutenticado.getTipoSexo().getId());
+			dto.put("imagen", imagen? usuAutenticado.getImagen() : "");
+		}
+
+		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
+		return dto;
+	}
+	
+	
 	
 	/**
 	 * 
