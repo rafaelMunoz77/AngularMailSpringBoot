@@ -7,7 +7,7 @@ import com.angularMail.model.entities.TipoSexo;
 
 
 @Repository
-public interface tipoSexoRepository extends CrudRepository<TipoSexo, Integer> {
+public interface TipoSexoRepository extends CrudRepository<TipoSexo, Integer> {
 
 
 }
