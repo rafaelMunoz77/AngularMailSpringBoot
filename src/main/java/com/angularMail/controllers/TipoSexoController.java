@@ -5,18 +5,18 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.angularMail.model.entities.Nacionalidad;
-import com.angularMail.model.repositories.NacionalidadRepository;
+import com.angularMail.model.entities.TipoSexo;
+import com.angularMail.model.repositories.TipoSexoRepository;
 
 @CrossOrigin
 @RestController
-public class NacionalidadController {
+public class TipoSexoController {
 
 	@Autowired
-	NacionalidadRepository nacionalidadRep;
+	TipoSexoRepository tipoSexoRep;
 	
-	@GetMapping("nacionalidad/all")
-	public Iterable<Nacionalidad> getAllNacionalidades () {
-		return this.nacionalidadRep.findAll();
+	@GetMapping("tiposexo/all")
+	public Iterable<TipoSexo> getAllTiposSexo () {
+		return this.tipoSexoRep.findAll();
 	}
 }
