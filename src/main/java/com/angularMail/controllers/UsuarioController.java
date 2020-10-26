@@ -68,6 +68,60 @@ public class UsuarioController {
 	
 	
 	
+	/**
+	 * usado para comprobar si una contraseña es igual a la contraseña del usuario autenticado
+	 */
+	@PostMapping("/usuario/ratificaPassword")
+	public DTO ratificaPassword (@RequestBody DTO dtoRecibido, HttpServletRequest request) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		dto.put("result", "fail"); // Asumo que voy a fallar, si todo va bien se sobrescribe este valor
+
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+
+		try {
+			Usuario usuarioAutenticado = usuRep.findById(idUsuAutenticado).get(); // Localizo todos los datos del usuario
+			String password = (String) dtoRecibido.get("password");  // Compruebo la contraseña
+			if (password.equals(usuarioAutenticado.getPassword())) {
+				dto.put("result", "ok"); // Devuelvo éxito, las contraseñas son iguales
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return dto;
+	}
+	
+	
+	
+
+	/**
+	 * 
+	 */
+	@PostMapping("/usuario/modificaPassword")
+	public DTO modificaPassword (@RequestBody DTO dtoRecibido, HttpServletRequest request) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		dto.put("result", "fail"); // Asumo que voy a fallar, si todo va bien se sobrescribe este valor
+
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+
+		try {
+			Usuario usuarioAutenticado = usuRep.findById(idUsuAutenticado).get(); // Localizo al usuario
+			String password = (String) dtoRecibido.get("password");  // Recibo la password que llega en el dtoRecibido
+			usuarioAutenticado.setPassword(password); // Modifico la password
+			usuRep.save(usuarioAutenticado);  // Guardo el usuario, con nueva password, en la unidad de persistencia
+			dto.put("result", "ok"); // Devuelvo éxito
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return dto;
+	}
+	
+	
+	
+
 }
 
 
