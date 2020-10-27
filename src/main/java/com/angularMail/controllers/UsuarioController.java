@@ -30,36 +30,60 @@ public class UsuarioController {
 	TipoSexoRepository tipoSexoRep;
 	
 	/**
-	 * 
+	 * Obtiene y devuelve los datos del usuario autenticado
 	 */
 	@GetMapping("/usuario/getAutenticado")
 	public DTO getUsuarioAutenticado (boolean imagen, HttpServletRequest request) {
-		DTO dto = new DTO(); // Voy a devolver un dto
 		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
 
 		// Intento localizar un usuario a partir de su id
 		Usuario usuAutenticado = usuRep.findById(idUsuAutenticado).get();
-		if (usuAutenticado != null) {
-			dto.put("id", usuAutenticado.getId());
-			dto.put("nombre", usuAutenticado.getNombre());
-			dto.put("usuario", usuAutenticado.getUsuario());
-			dto.put("password", usuAutenticado.getPassword());
-			dto.put("email", usuAutenticado.getEmail());
-			dto.put("fechaNacimiento", usuAutenticado.getFechaNacimiento());
-			dto.put("fechaEliminacion", usuAutenticado.getFechaEliminacion());
-			dto.put("nacionalidad", usuAutenticado.getNacionalidad().getId());
-			dto.put("sexo", usuAutenticado.getTipoSexo().getId());
-			dto.put("imagen", imagen? usuAutenticado.getImagen() : "");
-		}
 
 		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
+		return getDTOFromUsuario(usuAutenticado, imagen);
+	}
+	
+	
+	/**
+	 * Obtiene y devuelve los datos de un usuario, a través de su id
+	 */
+	@GetMapping("/usuario/get")
+	public DTO getUsuario (int id, boolean imagen) {
+
+		// Intento localizar un usuario a partir de su id
+		Usuario usu = usuRep.findById(id).get();
+
+		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
+		return getDTOFromUsuario(usu, imagen);
+	}
+	
+	
+	/**
+	 * Fabrica un DTO con los datos que queremos enviar de un usuario.
+	 * @param usu
+	 * @param incluirImagen
+	 * @return
+	 */
+	private DTO getDTOFromUsuario (Usuario usu, boolean incluirImagen) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		if (usu != null) {
+			dto.put("id", usu.getId());
+			dto.put("nombre", usu.getNombre());
+			dto.put("usuario", usu.getUsuario());
+			dto.put("password", usu.getPassword());
+			dto.put("email", usu.getEmail());
+			dto.put("fechaNacimiento", usu.getFechaNacimiento());
+			dto.put("fechaEliminacion", usu.getFechaEliminacion());
+			dto.put("nacionalidad", usu.getNacionalidad().getId());
+			dto.put("sexo", usu.getTipoSexo().getId());
+			dto.put("imagen", incluirImagen? usu.getImagen() : "");
+		}
 		return dto;
 	}
 	
 	
-	
 	/**
-	 * 
+	 * Autentica un usuario, dados su datos de acceso: nombre de usuario y contraseña
 	 */
 	@PostMapping("/usuario/autentica")
 	public DTO autenticaUsuario (@RequestBody DatosAutenticacionUsuario datos) {
