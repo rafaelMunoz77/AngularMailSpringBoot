@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -218,6 +219,66 @@ public class MensajeController {
 		
 		return dto;
 	}
+	
+	
+	/**
+	 * Guarda un nuevo mensaje en BBDD, para los usuarios especificados
+	 * @param datosNuevoMensaje
+	 * @param request
+	 * @return
+	 */
+	@PutMapping("/mensajes/nuevo")
+	private DTO nuevoMensaje (@RequestBody DatosEnvioNuevoMensaje datosNuevoMensaje, HttpServletRequest request) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		dto.put("result", "fail"); // Asumo que voy a fallar, si todo va bien se sobrescribe este valor
+
+		try {
+			// Localizo el usuario autenticado, será el emisor del mensaje
+			int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+			Usuario usuAutenticado = this.usuRep.findById(idUsuAutenticado).get();
+			
+			// Necesito incluir en una lista cada destinatario del mensaje.
+			List<DestinatarioMensaje> destinatarios = new ArrayList<DestinatarioMensaje>();
+			for (int idDestinatario : datosNuevoMensaje.idsDestinatarios) {
+		        // Para cada "id" que se encuentre en el array recibido
+		    	if (idDestinatario > 0) {
+		    		DestinatarioMensaje dm = new DestinatarioMensaje();
+		    		dm.setArchivado(false);
+		    		dm.setFechaEliminacion(null);
+		    		dm.setLeido(false);
+		    		dm.setSpam(false);
+		    		dm.setUsuario(this.usuRep.findById(idDestinatario).get());
+		    		destinatarios.add(dm);  
+		    	}		    	
+			}
+			
+		    // Si existen asunto, cuerpo y destinatarios, envío el nuevo mensaje
+		    if (datosNuevoMensaje.asunto != null && datosNuevoMensaje.cuerpo != null && destinatarios.size() > 0) {
+		    	Mensaje m = new Mensaje();
+		    	m.setAsunto(datosNuevoMensaje.asunto);
+		    	m.setCuerpo(datosNuevoMensaje.cuerpo);
+		    	m.setFecha(new Date());
+		    	m.setUsuarioEmisor(usuAutenticado);
+		    	// Guardo el mensaje
+		    	this.mensajeRepo.save(m);
+		    	
+		    	// Una vez guardado el mensaje, a cada entidad DestinatarioMensaje, le asigno el mensaje guardado
+		    	for (DestinatarioMensaje dm : destinatarios) {
+		    		dm.setMensaje(m);
+		    		this.destMensajeRep.save(dm);
+		    	}
+		    	// Especifico los destinatarios del mensaje, en la lista que posee la entidad para esto
+		    	m.setDestinatarioMensaje(destinatarios);
+		    	this.mensajeRepo.save(m); // Guardo definitivamente el mensaje
+		    	
+		    	// indico que todo ha funcionado correctamente
+				dto.put("result", "ok");
+		    }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return dto;
+	}
 }
 
 /**
@@ -234,3 +295,21 @@ class DatosAccionesSobreMensajes {
 	
 
 }
+
+
+/**
+ * Clase que contiene los datos para guardar un nuevo mensaje
+ */
+class DatosEnvioNuevoMensaje {
+	String asunto;  
+	String cuerpo;
+	int[] idsDestinatarios;
+	
+	public DatosEnvioNuevoMensaje(String asunto, String cuerpo, int[] idsDestinatarios) {
+		super();
+		this.asunto = asunto;
+		this.cuerpo = cuerpo;
+		this.idsDestinatarios = idsDestinatarios;
+	}
+}
+
