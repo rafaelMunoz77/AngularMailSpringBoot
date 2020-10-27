@@ -79,19 +79,19 @@ public class MensajeController {
 			// Obtengo los mensajes del servidor, en función del tipo de mensajes que se desea
 			switch (tipo) {
 			case RECIBIDOS:  // Lista de mensajes recibidos
-				mensajes = this.mensajeRepo.getMensajesRecibidosDeUsuario(idUsuAutenticado, pagina, mensajesPorPagina);
+				mensajes = this.mensajeRepo.getMensajesRecibidosDeUsuario(idUsuAutenticado, pagina * mensajesPorPagina, mensajesPorPagina);
 				countMensajes = this.mensajeRepo.countMensajesRecibidosDeUsuario(idUsuAutenticado);
 				break;
 			case ENVIADOS: 
-				mensajes = this.mensajeRepo.getMensajesEnviadosDeUsuario(idUsuAutenticado, pagina, mensajesPorPagina);
+				mensajes = this.mensajeRepo.getMensajesEnviadosDeUsuario(idUsuAutenticado, pagina * mensajesPorPagina, mensajesPorPagina);
 				countMensajes = this.mensajeRepo.countMensajesEnviadosDeUsuario(idUsuAutenticado);
 				break;
 			case ARCHIVADOS:
-				mensajes = this.mensajeRepo.getMensajesArchivadosDeUsuario(idUsuAutenticado, pagina, mensajesPorPagina);
+				mensajes = this.mensajeRepo.getMensajesArchivadosDeUsuario(idUsuAutenticado, pagina * mensajesPorPagina, mensajesPorPagina);
 				countMensajes = this.mensajeRepo.countMensajesArchivadosDeUsuario(idUsuAutenticado);
 				break;
 			case SPAM:
-				mensajes = this.mensajeRepo.getMensajesSpamDeUsuario(idUsuAutenticado, pagina, mensajesPorPagina);
+				mensajes = this.mensajeRepo.getMensajesSpamDeUsuario(idUsuAutenticado, pagina * mensajesPorPagina, mensajesPorPagina);
 				countMensajes = this.mensajeRepo.countMensajesSpamDeUsuario(idUsuAutenticado);
 				break;
 			}
