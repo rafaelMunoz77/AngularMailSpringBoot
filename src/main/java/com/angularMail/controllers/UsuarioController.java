@@ -1,6 +1,8 @@
 package com.angularMail.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,8 +55,26 @@ public class UsuarioController {
 		// Intento localizar un usuario a partir de su id
 		Usuario usu = usuRep.findById(id).get();
 
-		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
+		// Finalmente devuelvo el DTO
 		return getDTOFromUsuario(usu, imagen);
+	}
+	
+	
+	/**
+	 * Obtiene y devuelve los datos de un usuario, a través de su id
+	 */
+	@GetMapping("/usuario/filterByNombreOrEmail")
+	public List<DTO> filterByNombreOrEmail (String filtro) {
+
+		// Intento localizar un usuario a partir de su id
+		List<Usuario> usuarios = usuRep.filterByNombreOrEmail("%" + filtro + "%", "%" + filtro + "%@%");
+		List<DTO> usuariosEnDto = new ArrayList<DTO>();
+		for (Usuario u : usuarios) {
+			usuariosEnDto.add(getDTOFromUsuario(u, true));
+		}
+
+		// Finalmente devuelvo el Listado de dto que contienen usuarios
+		return usuariosEnDto;
 	}
 	
 	
