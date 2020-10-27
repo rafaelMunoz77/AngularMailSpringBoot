@@ -11,6 +11,6 @@ public interface DestinatarioMensajeRepository extends CrudRepository<Destinatar
 
 	@Query(value = "SELECT distinct * FROM destinatarioMensaje as dm "
 			+ "where dm.idDestinatario = ? and dm.idMensaje = ?", nativeQuery = true)
-	public DestinatarioMensaje getFromIdUsuarioAndIdMensaje(int idUsuario, int idMensaje);
+	public DestinatarioMensaje findByIdUsuarioAndIdMensaje(int idUsuario, int idMensaje);
 
 }
