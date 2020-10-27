@@ -1,12 +1,15 @@
 package com.angularMail.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.angularMail.jwtSecurity.AutenticadorJWT;
@@ -112,19 +115,7 @@ public class MensajeController {
 		return dtoResultado;
 	}
 	
-	
-	/**
-	 * 
-	 * @param u
-	 * @return
-	 */
-	private DTO getDtoFromUsuarioMinimosDatos (Usuario u) {
-		DTO dto = new DTO();
-		dto.put("id", u.getId());
-		dto.put("nombre", u.getNombre());
-		return dto;
-	}
-	
+		
 	
 	/**
 	 * Obtengo una estructura que se convertirá en JSON, con los datos que necesito de cada mensaje.
@@ -141,7 +132,7 @@ public class MensajeController {
 		dto.put("cuerpo", m.getCuerpo());
 		// Para el usuario autenticado, debo localizar el registro de la tabla "destinatarioMensaje". Dentro de esa tabla está la 
 		// información sobre si un usuario ha archivado, marcado como SPAM o eliminado un mensaje
-		DestinatarioMensaje dm = destMensajeRep.getFromIdUsuarioAndIdMensaje(idUsuAutenticado, m.getId());
+		DestinatarioMensaje dm = destMensajeRep.findByIdUsuarioAndIdMensaje(idUsuAutenticado, m.getId());
 		if (dm != null) {
 			dto.put("leido", dm.getLeido());
 			dto.put("archivado", dm.getArchivado());
@@ -158,4 +149,88 @@ public class MensajeController {
 		
 		return dto;
 	}
+	
+	
+
+	/**
+	 * 
+	 * @param u
+	 * @return
+	 */
+	private DTO getDtoFromUsuarioMinimosDatos (Usuario u) {
+		DTO dto = new DTO();
+		dto.put("id", u.getId());
+		dto.put("nombre", u.getNombre());
+		return dto;
+	}
+	
+	
+	
+	/**
+	 * Este método permite marcar de diferentes maneras los mensajes de un usuario. Se basa en un número entero
+	 * que actúa como "tipo de marca" y que tiene los siguientes valores:
+	 * 		0 -> marca como mensajes leídos
+	 * 		1 -> marca como mensajes archivados
+	 * 		2 -> marca como mensajes spam
+	 * 		3 -> marca como mensajes eliminados
+	 * 		4 -> mueve el mensaje a "recibidos", elimina las marcas de "leído", "archivado", "spam" y "eliminado"
+	 * @param dtoRecibido
+	 * @param request
+	 * @return
+	 */
+	@PostMapping("/mensajes/accionSobreMensajes")
+	private DTO accionSobreMensajes (@RequestBody DatosAccionesSobreMensajes datosAcciones, HttpServletRequest request) {
+		DTO dto = new DTO(); // Voy a devolver un dto
+		dto.put("result", "fail"); // Asumo que voy a fallar, si todo va bien se sobrescribe este valor
+
+		try {
+			int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+			for (int idMensaje : datosAcciones.ids) {
+				DestinatarioMensaje dm = this.destMensajeRep.findByIdUsuarioAndIdMensaje(idUsuAutenticado, idMensaje);
+				
+				switch (datosAcciones.tipoAccion) {
+				case 0: // marca como mensajes leídos
+					dm.setLeido(true);
+					break;
+				case 1: // marca como mensajes archivados
+					dm.setArchivado(true);
+					break;
+				case 2: // marca como mensajes spam
+					dm.setSpam(true);
+					break;
+				case 3: // marca como mensajes eliminados
+					dm.setFechaEliminacion(new Date());
+					break;
+				case 4: // mueve el mensaje a "recibidos", elimina las marcas de "archivado", "spam" y "eliminado"
+					dm.setArchivado(false);
+					dm.setSpam(false);
+					dm.setFechaEliminacion(null);
+					break; 
+				}
+				// Guardo en la unidad de persistencia el objeto dm
+				this.destMensajeRep.save(dm);
+			}
+			dto.put("result", "ok"); 
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return dto;
+	}
+}
+
+/**
+ * Clase que contiene los datos para realizar acciones sobre mensajes
+ */
+class DatosAccionesSobreMensajes {
+	int tipoAccion;  
+	int[] ids;
+	public DatosAccionesSobreMensajes(int tipoAccion, int[] ids) {
+		super();
+		this.tipoAccion = tipoAccion;
+		this.ids = ids;
+	}
+	
+
 }
