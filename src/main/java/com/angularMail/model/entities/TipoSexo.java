@@ -2,6 +2,9 @@ package com.angularMail.model.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -25,6 +28,7 @@ public class TipoSexo implements Serializable {
 
 	//bi-directional many-to-one association to Usuario
 	@OneToMany(mappedBy="tipoSexo")
+	@JsonIgnore
 	private List<Usuario> usuarios;
 
 	public TipoSexo() {
