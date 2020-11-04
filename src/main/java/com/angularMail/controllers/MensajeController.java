@@ -36,6 +36,14 @@ public class MensajeController {
 	public static final int ARCHIVADOS = 3;
 
 	
+	@GetMapping("/mensajes/getById")
+	public DTO mensajesRecibidosParaUsuarioAutenticado (int id, HttpServletRequest request) {
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
+		Mensaje m = this.mensajeRepo.findById(id).get();
+		return getDtoFromMensaje(m, idUsuAutenticado);
+	}
+	
+	
 	/**
 	 * Este método no se utiliza en los últimos vídeos de angularMail. Mantengo este método únicamente
 	 * para que la última versión de este servidor Spring Boot sea compatible con cualquier versión del cliente
