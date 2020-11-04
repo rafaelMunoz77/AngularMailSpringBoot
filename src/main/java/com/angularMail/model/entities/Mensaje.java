@@ -2,6 +2,9 @@ package com.angularMail.model.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.List;
 
@@ -34,11 +37,13 @@ public class Mensaje implements Serializable {
 
 	//bi-directional many-to-one association to DestinatarioMensaje
 	@OneToMany(mappedBy="mensaje")
+	@JsonIgnore
 	private List<DestinatarioMensaje> destinatarioMensaje;
 
 	//bi-directional many-to-one association to Usuario
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="idEmisor")
+	@JsonIgnore
 	private Usuario usuarioEmisor;
 
 	public Mensaje() {
